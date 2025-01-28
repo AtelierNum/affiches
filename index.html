@@ -8,6 +8,177 @@
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js">
 
   </script>
+
+<!doctype html>
+<html>
+
+<head>
+  <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
+
+  <script defer>
+    // https://github.com/nikolaiwarner/aframe-chromakey-material
+    AFRAME.registerShader('chromakey', {
+      schema: {
+        src: {type: 'map'},
+        color: {default: {x: 0.0, y: 1.0, z: 0.0}, type: 'vec3', is: 'uniform'},
+        chroma: {type: 'bool', is: 'uniform'},
+        transparent: {default: true, is: 'uniform'}
+      },
+
+      init: function (data) {
+
+        const videoEl = data.src;
+
+        document.addEventListener('click', () => {
+          videoEl.play();
+          const entity = document.querySelector("[sound]");
+          if (entity) entity.components.sound.playSound();
+        });
+
+        var videoTexture = new THREE.VideoTexture(data.src)
+        videoTexture.minFilter = THREE.LinearFilter
+        this.material = new THREE.ShaderMaterial({
+          uniforms: {
+            chroma: {
+              type: 'b',
+              value: data.chroma
+            },
+            color: {
+              type: 'c',
+              value: data.color
+            },
+            myTexture: {
+              type: 't',
+              value: videoTexture
+            }
+          },
+          vertexShader:
+            `
+            varying vec2 vUv;
+            
+            void main(void)
+            {
+              vUv = uv;
+              vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+              gl_Position = projectionMatrix * mvPosition;
+            }
+          `
+          ,
+          fragmentShader:
+            `
+              uniform sampler2D myTexture;
+              uniform vec3 color;
+              uniform bool chroma;
+              varying vec2 vUv;
+              
+              void main(void)
+              {
+                vec3 tColor = texture2D( myTexture, vUv ).rgb;
+                float a;
+                if(chroma == true){
+                   a = (length(tColor - color) - 0.5) * 7.0;
+                }
+                else {
+                  a = 1.0;
+                }
+                
+                gl_FragColor = vec4(tColor, a);
+              }
+            `
+        })
+      },
+
+      update: function (data) {
+        this.material.color = data.color
+        this.material.src = data.src
+        this.material.transparent = data.transparent
+      },
+    });
+  </script>
+
+  <script defer>
+    AFRAME.registerComponent("videohandler", {
+      init: function () {
+        this.trackedElements = document.querySelectorAll(
+          "a-marker[videohandler]"
+        );
+        // console.log(this.trackedElements);
+      },
+      tick: function () {
+        this.trackedElements.forEach((marker) => {
+          const vid = document.querySelector(
+            marker.attributes.vidReference.value
+          );
+          /*
+          const sound = document.querySelector(
+            marker.attributes.audioReference.value
+          );*/
+          if (marker.object3D.visible) {
+            if (vid && vid.paused) {
+              vid.play();
+            }
+            /*
+            if (sound && sound.paused) {
+              sound.play();
+            }*/
+          } else {
+            if (vid && !vid.paused) {
+              vid.pause();
+              vid.currentTime = 0;
+            }
+            /*
+            if (sound && !sound.paused) {
+              sound.pause();
+              sound.currentTime = 0;
+            }*/
+          }
+        });
+      },
+    });
+
+  </script>
+</head>
+
+<body style="margin : 0px; overflow: hidden;">
+
+  <a-scene embedded
+  arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; trackingMethod: best ; changeMatrixMode: modelViewMatrix; labelingMode:black_region;"
+  vr-mode-ui="enabled: false"
+  renderer="sortObjects: true; antialias: true; colorManagement: true; physicallyCorrectLights; logarithmicDepthBuffer: true;"
+  smooth=" true" smoothCount="5" smoothTolerance=".05" smoothThreshold="5" sourceWidth="800" sourceHeight="600"
+  displayWidth="1920" displayHeight="1080">
+
+
+    <a-assets>
+         <!-- Arduino poster -->
+      <video id="ard1" src="./assets/arduino_lum_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+        muted="true" playsinline="" webkit-playsinline=""></video>
+        <video id="ard2" src="./assets/arduino_make_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+        muted="true" playsinline="" webkit-playsinline=""></video>
+
+    </a-assets>
+
+    <!-- Arduino poster -->
+    <a-marker videohandler vidReference="#ard1" type="barcode" value="2"  size="0.1">
+      <a-entity material="shader: chromakey; src:#ard1; chroma:false; color: 0. 0. 0."
+        geometry="primitive: plane; width:  1; height:  1" position="0  0  0" rotation="270  0  0" side="double">
+      </a-entity>
+    </a-marker>
+
+    <a-marker videohandler vidReference="#ard2" type="barcode" value="4"  size="0.1">
+      <a-entity material="shader: chromakey; src:#ard2; chroma:false; color: 0. 0. 0."
+        geometry="primitive: plane; width:  1; height:  1" position="0  0  0" rotation="270  0  0" side="double">
+      </a-entity>
+    </a-marker>
+
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+  </a-scene>
+
+</body>
+
+</html>
 </head>
 
 
