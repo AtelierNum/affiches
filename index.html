@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
-    <!--
+
+<head>
+  <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
+  <!--
   <script defer>
     let audio = new Audio('./assets/sounds.mp3'); // load the sound as an html5 element (without webaudio api)
     AFRAME.registerComponent('playsound', {
@@ -16,54 +17,54 @@
     });
   </script>-->
 
-    <script defer>
-      // let userConsent = false;
+  <script defer>
+    // let userConsent = false;
 
-      // document.querySelector("click", () => {
-      //   userConsent = true
-      // });
+    // document.querySelector("click", () => {
+    //   userConsent = true
+    // });
 
-      // https://github.com/nikolaiwarner/aframe-chromakey-material
-      AFRAME.registerShader("chromakey", {
-        schema: {
-          src: { type: "map" },
-          color: {
-            default: { x: 0.0, y: 1.0, z: 0.0 },
-            type: "vec3",
-            is: "uniform",
-          },
-          chroma: { type: "bool", is: "uniform" },
-          transparent: { default: true, is: "uniform" },
+    // https://github.com/nikolaiwarner/aframe-chromakey-material
+    AFRAME.registerShader("chromakey", {
+      schema: {
+        src: { type: "map" },
+        color: {
+          default: { x: 0.0, y: 1.0, z: 0.0 },
+          type: "vec3",
+          is: "uniform",
         },
+        chroma: { type: "bool", is: "uniform" },
+        transparent: { default: true, is: "uniform" },
+      },
 
-        init: function (data) {
-          const videoEl = data.src;
-          document.addEventListener("click", () => {
-            videoEl.play();
-            const entity = document.querySelector("[sound]");
-            // console.log(entity)
-            // console.log(document.querySelector("#debug-marker"))
-            entity.components.sound.playSound();
-          });
+      init: function (data) {
+        const videoEl = data.src;
+        document.addEventListener("click", () => {
+          videoEl.play();
+          const entity = document.querySelector("[sound]");
+          // console.log(entity)
+          // console.log(document.querySelector("#debug-marker"))
+          entity.components.sound.playSound();
+        });
 
-          var videoTexture = new THREE.VideoTexture(data.src);
-          videoTexture.minFilter = THREE.LinearFilter;
-          this.material = new THREE.ShaderMaterial({
-            uniforms: {
-              chroma: {
-                type: "b",
-                value: data.chroma,
-              },
-              color: {
-                type: "c",
-                value: data.color,
-              },
-              myTexture: {
-                type: "t",
-                value: videoTexture,
-              },
+        var videoTexture = new THREE.VideoTexture(data.src);
+        videoTexture.minFilter = THREE.LinearFilter;
+        this.material = new THREE.ShaderMaterial({
+          uniforms: {
+            chroma: {
+              type: "b",
+              value: data.chroma,
             },
-            vertexShader: `
+            color: {
+              type: "c",
+              value: data.color,
+            },
+            myTexture: {
+              type: "t",
+              value: videoTexture,
+            },
+          },
+          vertexShader: `
             varying vec2 vUv;
 
             void main(void)
@@ -73,7 +74,7 @@
               gl_Position = projectionMatrix * mvPosition;
             }
           `,
-            fragmentShader: `
+          fragmentShader: `
               uniform sampler2D myTexture;
               uniform vec3 color;
               uniform bool chroma;
@@ -93,155 +94,164 @@
                 gl_FragColor = vec4(tColor, a);
               }
             `,
-          });
-        },
+        });
+      },
 
-        update: function (data) {
-          this.material.color = data.color;
-          this.material.src = data.src;
-          this.material.transparent = data.transparent;
-        },
-      });
+      update: function (data) {
+        this.material.color = data.color;
+        this.material.src = data.src;
+        this.material.transparent = data.transparent;
+      },
+    });
 
-      AFRAME.registerComponent("vidhandler", {
-        trackedElements: null,
+    AFRAME.registerComponent("vidhandler", {
+      trackedElements: null,
 
-        init: function () {
-          this.trackedElements = document.querySelectorAll(
-            "a-marker[vidhandler]"
-          );
-          console.log(this.trackedElements);
-        },
-        tick: function () {
-          // if(!userConsent){
-          //   return;
-          // }
+      init: function () {
+        this.trackedElements = document.querySelectorAll(
+          "a-marker[vidhandler]"
+        );
+        console.log(this.trackedElements);
+      },
+      tick: function () {
+        // if(!userConsent){
+        //   return;
+        // }
 
-          this.trackedElements.forEach((marker) => {
-            if (marker.object3D.visible) {
-              const vid = document.querySelector(
-                marker.attributes.vidreference.value
-              );
-              //const sound = document.querySelector(
-              //  marker.attributes.audioReference.value
-              //);
+        this.trackedElements.forEach((marker) => {
+          if (marker.object3D.visible) {
+            const vid = document.querySelector(
+              marker.attributes.vidreference.value
+            );
+            //const sound = document.querySelector(
+            //  marker.attributes.audioReference.value
+            //);
 
-              //console.log(vid);
-              //console.log(sound);
+            //console.log(vid);
+            //console.log(sound);
 
-              if (vid.paused) {
-                vid.play();
-              }
-
-             // if (sound.paused) {
-               // sound.play();
-              //}
-            } else {
-              const vid = document.querySelector(
-                marker.attributes.vidreference.value
-              );
-              //const sound = document.querySelector(
-                //marker.attributes.audioReference.value
-              //);
-
-              if (!vid.paused) {
-                vid.pause();
-                vid.currentTime = 0;
-              }
-
-              //if (!sound.paused) {
-              //  sound.pause();
-              //  sound.currentTime = 0;
-             // }
+            if (vid.paused) {
+              vid.play();
             }
-          });
-        },
-      });
-    </script>
-  </head>
 
-  <body style="margin: 0px; overflow: hidden">
-    <a-scene
-      embedded
-      arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; trackingMethod: best ; changeMatrixMode: modelViewMatrix;"
-      vr-mode-ui="enabled: false"
-      renderer="sortObjects: true; antialias: true; colorManagement: true; physicallyCorrectLights; logarithmicDepthBuffer: true;"
-      smooth=" true"
-      smoothCount="5"
-      smoothTolerance=".05"
-      smoothThreshold="5"
-      sourceWidth="800"
-      sourceHeight="600"
-      displayWidth="1280"
-      displayHeight="720"
-    >
+            // if (sound.paused) {
+            // sound.play();
+            //}
+          } else {
+            const vid = document.querySelector(
+              marker.attributes.vidreference.value
+            );
+            //const sound = document.querySelector(
+            //marker.attributes.audioReference.value
+            //);
 
-      <!-- ASSETS ---------------------------------------->
-      <a-assets>
-        <video
-          id="vid0"
-          src="assets/arduino_lum_1_1.mp4"
-          loop="true"
-          preload="auto"
-          controls="true"
-          muted="true"
-          playsinline=""
-          webkit-playsinline=""
-        ></video>
-       
-        <video
-          id="vid1"
-          src="assets/arduino_make_1.mp4"
-          autoplay="true"
-          loop="true"
-          preload="auto"
-          controls="true"
-          muted="true"
-          playsinline=""
-          webkit-playsinline=""
-        ></video>
+            if (!vid.paused) {
+              vid.pause();
+              vid.currentTime = 0;
+            }
 
+            //if (!sound.paused) {
+            //  sound.pause();
+            //  sound.currentTime = 0;
+            // }
+          }
+        });
+      },
+    });
+  </script>
+</head>
 
-      </a-assets>
-      <!-- FIN ASSETS ---------------------------------------->
+<body style="margin: 0px; overflow: hidden">
+  <a-scene embedded
+    arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; trackingMethod: best ; changeMatrixMode: modelViewMatrix;"
+    vr-mode-ui="enabled: false"
+    renderer="sortObjects: true; antialias: true; colorManagement: true; physicallyCorrectLights; logarithmicDepthBuffer: true;"
+    smooth=" true" smoothCount="5" smoothTolerance=".05" smoothThreshold="5" sourceWidth="800" sourceHeight="600"
+    displayWidth="1280" displayHeight="720">
 
-      <!-- ARDUINO  ---------------------------------------->
-      <a-marker
-        vidhandler
-        vidreference="#vid0"
-        type="barcode"
-        value="2"
-      >
-        <a-entity
-          material="shader: chromakey; src: #vid0; chroma:false; color: 0. 0. 0."
-          geometry="primitive: plane; width:  1; height:  1"
-          position="0  0  0"
-          rotation="270  0  0"
-          side="double"
-        >
-        </a-entity>
-      </a-marker>
+    <!-- ASSETS ---------------------------------------->
+    <a-assets>
+      <video id="vid0" src="assets/arduino_lum_1_1.mp4" loop="true" preload="auto" controls="true" muted="true"
+        playsinline="" webkit-playsinline=""></video>
 
-      <a-marker 
-        vidhandler
-        vidreference="#vid1"
-        type="barcode" value="4">
-        <a-entity
-          material="shader: chromakey; src: #vid1; chroma:false; color: 0. 0. 0."
-          geometry="primitive: plane; width:  1; height:  1"
-          position="0  0  0"
-          rotation="270  0  0"
-          side="double"
-        >
-        </a-entity>
-      </a-marker>
-      <!-- FIN ARDUINO  ---------------------------------------->
+      <video id="vid1" src="assets/arduino_make_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+        muted="true" playsinline="" webkit-playsinline=""></video>
 
-      
+      <video id="ai1" src="assets/AI_affiche_1_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+        muted="true" playsinline="" webkit-playsinline=""></video>
 
-      <a-camera position="0 0 0" look-controls="enabled: false">
         
-      </a-camera>
-    </a-scene>
-  </body>
+      <video id="ai2" src="assets/AI_affiche_2_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="atelier1" src="assets/ateliernum_affiches_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+        muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="atelier2" src="assets/ateliernum_affiches_2_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="fondvert1" src="assets/FondVert_affiche_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="fondvert2" src="assets/FondVert_affiche_2.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="mapping1" src="assets/mapping_affiches_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="mapping2" src="assets/mapping_affiches_2_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="photo1" src="assets/prisedevu_affiche_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="photo2" src="assets/prisedevu_affiche_2_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="proto1" src="assets/protypage_affiche_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="proto2" src="assets/protypage_affiche_2_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="ra1" src="assets/RealiteAugmentee_affiche_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="ra2" src="assets/RealiteAugmentee_affiche_2_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="rv1" src="assets/realiteeVirtuelle_affiche_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+      <video id="rv2" src="assets/realiteeVirtuelle_affiche_2_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      muted="true" playsinline="" webkit-playsinline=""></video>
+
+
+
+
+    </a-assets>
+    <!-- FIN ASSETS ---------------------------------------->
+
+
+    <a-marker vidhandler vidreference="#vid0" type="barcode" value="2">
+      <a-entity material="shader: chromakey; src: #vid0; chroma:false; color: 0. 0. 0."
+        geometry="primitive: plane; width:  1; height:  1" position="0  0  0" rotation="270  0  0" side="double">
+      </a-entity>
+    </a-marker>
+
+    <a-marker vidhandler vidreference="#vid1" type="barcode" value="4">
+      <a-entity material="shader: chromakey; src: #vid1; chroma:false; color: 0. 0. 0."
+        geometry="primitive: plane; width:  1; height:  1" position="0  0  0" rotation="270  0  0" side="double">
+      </a-entity>
+    </a-marker>
+ 
+
+
+
+    <a-camera position="0 0 0" look-controls="enabled: false">
+
+    </a-camera>
+  </a-scene>
+</body>
+
 </html>
