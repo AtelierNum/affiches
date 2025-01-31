@@ -123,6 +123,7 @@
             const vid = document.querySelector(
               marker.attributes.vidreference.value
             );
+            console.log(vid)
             //const sound = document.querySelector(
             //  marker.attributes.audioReference.value
             //);
@@ -146,8 +147,8 @@
             //);
 
             if (!vid.paused) {
-              vid.pause();
-              vid.currentTime = 0;
+            //  vid.pause();
+            //  vid.currentTime = 0;
             }
 
             //if (!sound.paused) {
@@ -202,10 +203,10 @@
       <video id="mapping2" src="assets/mapping_affiches_2_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
       muted="true" playsinline="" webkit-playsinline=""></video>
 
-      <video id="photo1" src="assets/prisedevu_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      <video id="photo1" src="./assets/prisedevu_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
       muted="true" playsinline="" webkit-playsinline=""></video>
 
-      <video id="photo2" src="assets/prisedevu_2_1_2.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      <video id="photo2" src="./assets/prisedevu_2_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
       muted="true" playsinline="" webkit-playsinline=""></video>
 
       <video id="proto1" src="assets/protypage_affiche_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
@@ -302,11 +303,11 @@
       </a-entity>
   </a-marker>
 
-  <a-marker vidhandler vidreference="#ra1" type="barcode" value="22">
-      <a-entity material="shader: chromakey; src: #ra1; chroma:false; color: 0. 0. 0."
-          geometry="primitive: plane; width:  1.05; height:  1.05" position="0  0  0" rotation="90  90  0" side="double">
-      </a-entity>
-  </a-marker>
+  <a-marker vidhandler vidreference="#photo1" type="barcode" value="22">
+    <a-entity material="shader: chromakey; src: #photo1; chroma:false; color: 0. 0. 0."
+        geometry="primitive: plane; width:  1.05; height:  1.05" position="0  0  0" rotation="270  0  0" side="double">
+    </a-entity>
+</a-marker>
 
   <a-marker vidhandler vidreference="#proto1" type="barcode" value="12">
       <a-entity material="shader: chromakey; src: #proto1; chroma:false; color: 0. 0. 0."
