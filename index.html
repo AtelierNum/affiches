@@ -202,10 +202,10 @@
       <video id="mapping2" src="assets/mapping_affiches_2_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
       muted="true" playsinline="" webkit-playsinline=""></video>
 
-      <video id="photo1" src="assets/prisedevu_affiche_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      <video id="photo1" src="assets/prisedevu_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
       muted="true" playsinline="" webkit-playsinline=""></video>
 
-      <video id="photo2" src="assets/prisedevu_affiche_2_1_2.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      <video id="photo2" src="assets/prisedevu_2_1_2.mp4" autoplay="true" loop="true" preload="auto" controls="true"
       muted="true" playsinline="" webkit-playsinline=""></video>
 
       <video id="proto1" src="assets/protypage_affiche_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
@@ -214,16 +214,16 @@
       <video id="proto2" src="assets/protypage_affiche_2_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
       muted="true" playsinline="" webkit-playsinline=""></video>
 
-      <video id="ra1" src="assets/RealiteAugmentee_affiche_1_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      <video id="ra1" src="assets/ra1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
       muted="true" playsinline="" webkit-playsinline=""></video>
 
-      <video id="ra2" src="assets/RealiteAugmentee_affiche_2_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      <video id="ra2" src="assets/ra2.mp4" autoplay="true" loop="true" preload="auto" controls="true"
       muted="true" playsinline="" webkit-playsinline=""></video>
 
-      <video id="rv1" src="assets/realiteeVirtuelle_affiche_1_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      <video id="rv1" src="assets/rv1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
       muted="true" playsinline="" webkit-playsinline=""></video>
 
-      <video id="rv2" src="assets/realiteeVirtuelle_affiche_2_1_1.mp4" autoplay="true" loop="true" preload="auto" controls="true"
+      <video id="rv2" src="assets/rv2.mp4" autoplay="true" loop="true" preload="auto" controls="true"
       muted="true" playsinline="" webkit-playsinline=""></video>
 
 
@@ -302,8 +302,8 @@
       </a-entity>
   </a-marker>
 
-  <a-marker vidhandler vidreference="#photo2" type="barcode" value="22">
-      <a-entity material="shader: chromakey; src: #photo2; chroma:false; color: 0. 0. 0."
+  <a-marker vidhandler vidreference="#ra1" type="barcode" value="22">
+      <a-entity material="shader: chromakey; src: #ra1; chroma:false; color: 0. 0. 0."
           geometry="primitive: plane; width:  1.05; height:  1.05" position="0  0  0" rotation="90  90  0" side="double">
       </a-entity>
   </a-marker>
@@ -326,9 +326,9 @@
       </a-entity>
   </a-marker>
 
-  <a-marker vidhandler vidreference="#ra2" type="barcode" value="9">
+  <a-marker vidhandler vidreference="#ra1" type="barcode" value="9">
       <a-entity material="shader: chromakey; src: #ra2; chroma:false; color: 0. 0. 0."
-          geometry="primitive: plane; width:  1.05; height:  1.05" position="0  180  0" rotation="270  180  0" side="double">
+          geometry="primitive: plane; width:  1.05; height:  1.05" position="0  180  0" rotation="270  0  0" side="double">
       </a-entity>
   </a-marker>
 
